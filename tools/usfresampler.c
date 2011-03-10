@@ -39,8 +39,6 @@
 #include <assert.h>
 #include <uart/usf.h>
 
-static char svn_id[] = "$Id: usfresampler.c 2045 2011-02-02 14:44:45Z ansan501 $";
-
 #define E(err, str) do {                                                \
         if ((err) != USF_ERROR_OK)                                      \
             print_and_exit("%s:%d: %s\n",                               \
@@ -74,10 +72,7 @@ exit_usage(const char *error)
 	    "      -h              Print this message.\n"
 	    "      -o FILE         Output file name.\n"
 	    "      -p PERIOD       Sample period.\n"
-	    "      -s SEED         Random seed.\n"
-	    "\n"
-	    "%s\n",
-	    svn_id);
+	    "      -s SEED         Random seed.\n");
 
     if (error) {
 	fprintf(stderr,
