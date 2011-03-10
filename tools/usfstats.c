@@ -37,10 +37,10 @@
 #include <uart/usf.h>
 
 #define E_USF(e, name) do {                                     \
-    usf_error_t _e = (e);                                       \
-    if (_e != USF_ERROR_OK)                                     \
-        print_and_exit("%s: %s\n", name, usf_strerror(_e));     \
-} while (0)
+        usf_error_t _e = (e);                                   \
+        if (_e != USF_ERROR_OK)                                 \
+            print_and_exit("%s: %s\n", name, usf_strerror(_e)); \
+    } while (0)
 
 static char *usage_str = "Usage: usfstats [INFILE]";
 
@@ -56,8 +56,8 @@ static inline void
 STATS_PRINT(stats_t s)
 {
     printf("events:     %lu\n", s[USF_EVENT_SAMPLE] +
-                                s[USF_EVENT_DANGLING] +
-                                s[USF_EVENT_TRACE]);
+           s[USF_EVENT_DANGLING] +
+           s[USF_EVENT_TRACE]);
     printf("samples:    %lu\n", s[USF_EVENT_SAMPLE]);
     printf("danglings:  %lu\n", s[USF_EVENT_DANGLING]);
     printf("traces:     %lu\n", s[USF_EVENT_TRACE]);

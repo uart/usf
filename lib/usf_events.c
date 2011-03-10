@@ -45,9 +45,9 @@ typedef struct {
 /* ********************************************************************** */
 
 #define DATA_LEN_ACCESS (2*sizeof(usf_addr_t) + \
-			 sizeof(usf_atime_t) + \
-			 sizeof(usf_tid_t) + \
-			 sizeof(usf_alen_t) + \
+			 sizeof(usf_atime_t) +  \
+			 sizeof(usf_tid_t) +    \
+			 sizeof(usf_alen_t) +   \
 			 sizeof(usf_atype_t))
 
 #define D_DELTA_pc (1 << 0)
@@ -58,17 +58,17 @@ typedef struct {
 #define D_CONST_len (1 << 5)
 #define D_CONST_type (1 << 6)
 
-#define PACK_UINT64(file, flags, buf, a, field)	\
-    pack_uint64(flags, buf, \
+#define PACK_UINT64(file, flags, buf, a, field)                         \
+    pack_uint64(flags, buf,                                             \
 		&file->last_access.field, a->field, D_DELTA_ ## field)
 
-#define PACK_UINT16(file, flags, buf, a, field)	\
-    pack_uint16(flags, buf, \
+#define PACK_UINT16(file, flags, buf, a, field)                         \
+    pack_uint16(flags, buf,                                             \
 		&file->last_access.field, a->field, D_CONST_ ## field)
 
-#define PACK_UINT8(file, flags, buf, a, field)	\
-    pack_uint8(flags, buf, \
-		&file->last_access.field, a->field, D_CONST_ ## field)
+#define PACK_UINT8(file, flags, buf, a, field)                          \
+    pack_uint8(flags, buf,                                              \
+               &file->last_access.field, a->field, D_CONST_ ## field)
 
 
 #define UNPACK_UINT64(file, flags, buf, a, field)			\
@@ -400,7 +400,7 @@ usf_error_t
 usf_append(usf_file_t *file, const usf_event_t *event)
 {
     if(!file || !event || (event->type >= ARRAY_LEN(event_io)))
-       return USF_ERROR_PARAM;
+        return USF_ERROR_PARAM;
 
     if (file->header->flags & USF_FLAG_TRACE)
 	return usf_append_trace(file, event);

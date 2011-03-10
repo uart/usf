@@ -47,9 +47,11 @@ typedef struct usf_io_methods_s {
     usf_error_t (*write)(usf_file_t *file, void *buf, size_t count);
 } usf_io_methods_t;
 
-#define USF_COMP_LIST                                                          \
- _COMP(USF_COMPRESSION_NONE,  init_none,  fini_none,  read_none,  write_none)  \
- _COMP(USF_COMPRESSION_BZIP2, init_bzip2, fini_bzip2, read_bzip2, write_bzip2) \
+#define USF_COMP_LIST                                                   \
+    _COMP(USF_COMPRESSION_NONE,                                         \
+          init_none,  fini_none,  read_none,  write_none)               \
+    _COMP(USF_COMPRESSION_BZIP2,                                        \
+          init_bzip2, fini_bzip2, read_bzip2, write_bzip2)              \
 
 
 usf_error_t init_none(usf_file_t *file, int mode);

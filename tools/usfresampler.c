@@ -41,11 +41,11 @@
 
 static char svn_id[] = "$Id: usfresampler.c 2045 2011-02-02 14:44:45Z ansan501 $";
 
-#define E(err, str) do {                                        \
-    if ((err) != USF_ERROR_OK)                                  \
-        print_and_exit("%s:%d: %s\n",                           \
-                __FUNCTION__, __LINE__, usf_strerror(err));     \
-} while (0)
+#define E(err, str) do {                                                \
+        if ((err) != USF_ERROR_OK)                                      \
+            print_and_exit("%s:%d: %s\n",                               \
+                           __FUNCTION__, __LINE__, usf_strerror(err));  \
+    } while (0)
 
 typedef struct {
     char *i_file_name;
@@ -102,20 +102,20 @@ parse_args(args_t *args, int argc, char **argv)
 
     while ((c = getopt(argc, argv, "ho:p:s:")) != -1) {
         switch (c) {
-            case 'h':
-                exit_usage(NULL);
-                break;
-            case 'o':
-                args->o_file_name = optarg;
-                break;
-            case 'p':
-                args->sample_period = atof(optarg);
-                break;
-            case 's':
-                args->seed = atoi(optarg);
-                break;
-            default:
-                assert(0);
+        case 'h':
+            exit_usage(NULL);
+            break;
+        case 'o':
+            args->o_file_name = optarg;
+            break;
+        case 'p':
+            args->sample_period = atof(optarg);
+            break;
+        case 's':
+            args->seed = atoi(optarg);
+            break;
+        default:
+            assert(0);
         }
     }
 
@@ -172,11 +172,11 @@ main(int argc, char **argv)
     next_sample = rnd_exp(args.sample_period);
     while ((error = usf_read(usf_i_file, &event)) == USF_ERROR_OK) {
         switch (event.type) {
-            case USF_EVENT_SAMPLE: case USF_EVENT_DANGLING:
-                break;
-            case USF_EVENT_BURST: case USF_EVENT_TRACE:
-                print_and_exit("File format error\n");
-                break;
+        case USF_EVENT_SAMPLE: case USF_EVENT_DANGLING:
+            break;
+        case USF_EVENT_BURST: case USF_EVENT_TRACE:
+            print_and_exit("File format error\n");
+            break;
         }
 
         if (event_count == next_sample) {

@@ -39,26 +39,27 @@
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
 #define MIN(x, y) ((x) < (y) ? (x) : (y))
 
-#define E_ERROR(fmt, args...)   \
+#define E_ERROR(fmt, args...)                                   \
     print_and_exit("%s:%i " fmt, __FILE__, __LINE__, args)
 
 #define E_USF(e, name) do {                                     \
-    usf_error_t _e = (e);                                       \
-    if (_e != USF_ERROR_OK)                                     \
-        E_ERROR("%s: %s\n", name, usf_strerror(_e));            \
-} while (0)
+        usf_error_t _e = (e);                                   \
+        if (_e != USF_ERROR_OK)                                 \
+            E_ERROR("%s: %s\n", name, usf_strerror(_e));        \
+    } while (0)
 
-#define E_NULL(e, name) do {                                    \
-    __typeof__(e) _e = (e);                                     \
-    if (!_e)                                                    \
-        E_ERROR("%s: %s\n", name, strerror(errno));             \
-} while (0)
+#define E_NULL(e, name) do {                            \
+        __typeof__(e) _e = (e);                         \
+        if (!_e)                                        \
+            E_ERROR("%s: %s\n", name, strerror(errno)); \
+    } while (0)
 
 
-static char *usage_str = "Usage: usfcat [OPTION]... [FILE]...\n"
-                         "Concatenate FILE(s) to standard output.\n\n"
-                         "  -h, --help\t\tdisplay this help and exit\n"
-                         "  -c, --compression\tSet compression algorithm\n";
+static char *usage_str = 
+    "Usage: usfcat [OPTION]... [FILE]...\n"
+    "Concatenate FILE(s) to standard output.\n\n"
+    "  -h, --help\t\tdisplay this help and exit\n"
+    "  -c, --compression\tSet compression algorithm\n";
 
 typedef struct {
     int    ifile_list_len;
@@ -93,25 +94,25 @@ parse_args(args_t *args, int argc, char **argv)
 
     while ((c = getopt_long(argc, argv, "hc:", long_opts, NULL)) != -1) {
         switch (c) {
-            case 'h':
-                printf("%s\n", usage_str);
-                exit(EXIT_SUCCESS);
+        case 'h':
+            printf("%s\n", usage_str);
+            exit(EXIT_SUCCESS);
 
-            case 'c':
-                if (!strcmp("none", optarg))
-                    args->compression = USF_COMPRESSION_NONE;
-                else if (!strcmp("bzip2", optarg))
-                    args->compression = USF_COMPRESSION_BZIP2;
-                else
-                    print_and_exit("Unknown compression\n\n%s\n", usage_str);
-                break;
+        case 'c':
+            if (!strcmp("none", optarg))
+                args->compression = USF_COMPRESSION_NONE;
+            else if (!strcmp("bzip2", optarg))
+                args->compression = USF_COMPRESSION_BZIP2;
+            else
+                print_and_exit("Unknown compression\n\n%s\n", usage_str);
+            break;
 
-            case '?':
-            case ':':
-                print_and_exit("\n%s\n", usage_str);
+        case '?':
+        case ':':
+            print_and_exit("\n%s\n", usage_str);
 
-            default:
-                abort();
+        default:
+            abort();
         }
     }
 

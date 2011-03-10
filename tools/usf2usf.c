@@ -39,7 +39,7 @@
 
 #include <uart/usf.h>
 usf_error_t usf_open_hidden(usf_file_t **file,
-        const char *path, usf_compression_t override);
+                            const char *path, usf_compression_t override);
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -179,7 +179,7 @@ main(int argc, char **argv)
     }
 
     if ((error = usf_header((const usf_header_t **)&header_in,
-                             input)) != USF_ERROR_OK) {
+                            input)) != USF_ERROR_OK) {
 	fprintf(stderr, "Unable to read header: %s\n",
 		usf_strerror(error));
 	return EXIT_FAILURE;

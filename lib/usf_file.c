@@ -50,10 +50,10 @@ check_compression(usf_compression_t comp)
 {
 #define _COMP(comp, u1, u2, u3, u4) case comp:
     switch (comp) { 
-            USF_COMP_LIST
+        USF_COMP_LIST
             return USF_ERROR_OK;
-        default:
-            return USF_ERROR_FILE;
+    default:
+        return USF_ERROR_FILE;
     }
 #undef _COMP
 }
@@ -147,7 +147,7 @@ usf_create(usf_file_t **file,
      * that at the moment. Having both bits set will always constitue
      * an error. */
     E_IF(!(header->flags & USF_FLAG_NATIVE_ENDIAN) ||
-    header->flags & USF_FLAG_FOREIGN_ENDIAN, USF_ERROR_PARAM);
+         header->flags & USF_FLAG_FOREIGN_ENDIAN, USF_ERROR_PARAM);
 
     f = malloc(sizeof(usf_file_t));
     E_NULL(f, USF_ERROR_MEM);

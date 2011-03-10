@@ -46,13 +46,13 @@
 #define DBGLOG(error_, expr_)
 #endif
 
-#define E_IF(expr, err)					\
-    do {						\
-        if (expr) {					\
-            error = err;				\
-	    DBGLOG(err, #expr);				\
-	    goto ret_err;				\
-        }						\
+#define E_IF(expr, err)                         \
+    do {                                        \
+        if (expr) {                             \
+            error = err;                        \
+	    DBGLOG(err, #expr);                 \
+	    goto ret_err;                       \
+        }                                       \
     } while (0)
 
 #define E_NULL(expr, err) E_IF(!(expr), err)
@@ -68,13 +68,13 @@
     } while (0)
 
 
-#define E_IF_IO(file, expr)						\
-    do {								\
-        if (expr) {							\
-	    error = feof(file) ? USF_ERROR_EOF : USF_ERROR_SYS;	        \
-            DBGLOG(error, #expr);                                       \
-	    goto ret_err;						\
-        }								\
+#define E_IF_IO(file, expr)                                     \
+    do {                                                        \
+        if (expr) {                                             \
+	    error = feof(file) ? USF_ERROR_EOF : USF_ERROR_SYS; \
+            DBGLOG(error, #expr);                               \
+	    goto ret_err;                                       \
+        }                                                       \
     } while(0)
 
 #endif

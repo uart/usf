@@ -43,10 +43,10 @@ extern "C" {
 #define USF_VERSION(maj, min) (((maj & 0xFFFF) << 16) | ((min) & 0xFFFF))
 #define USF_VERSION_MAJOR(v) (((v) >> 16) & 0xFFFF)
 #define USF_VERSION_MINOR(v) ((v) & 0xFFFF)
-
+    
 #define USF_VERSION_CURRENT_MAJOR 0
 #define USF_VERSION_CURRENT_MINOR 2
-#define USF_VERSION_CURRENT (USF_VERSION(USF_VERSION_CURRENT_MAJOR, \
+#define USF_VERSION_CURRENT (USF_VERSION(USF_VERSION_CURRENT_MAJOR,     \
 					 USF_VERSION_CURRENT_MINOR))
 
 typedef uint16_t usf_version_t;

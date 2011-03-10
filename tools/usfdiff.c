@@ -34,20 +34,20 @@
 #include <inttypes.h>
 #include <uart/usf.h>
 
-#define E_PRINT(fmt, args...)   \
+#define E_PRINT(fmt, args...)                                   \
     print_and_exit("%s:%i " fmt, __FILE__, __LINE__, args)
 
 #define E_USF(e, name) do {                                     \
-    usf_error_t _e = (e);                                       \
-    if (_e != USF_ERROR_OK)                                     \
-        E_PRINT("%s: %s\n", name, usf_strerror(_e));            \
-} while (0)
+        usf_error_t _e = (e);                                   \
+        if (_e != USF_ERROR_OK)                                 \
+            E_PRINT("%s: %s\n", name, usf_strerror(_e));        \
+    } while (0)
 
-#define E_NULL(e, name) do {                                    \
-    __typeof__(e) _e = (e);                                     \
-    if (!_e)                                                    \
-        E_ERROR("%s: %s\n", name, strerror(errno));             \
-} while (0)
+#define E_NULL(e, name) do {                            \
+        __typeof__(e) _e = (e);                         \
+        if (!_e)                                        \
+            E_ERROR("%s: %s\n", name, strerror(errno)); \
+    } while (0)
 
 
 typedef struct {
@@ -144,16 +144,16 @@ comp_event(usf_event_t *e1, usf_event_t *e2)
         return 1;
 
     switch (e1->type) {
-        case USF_EVENT_SAMPLE:
-            return comp_sample(&e1->u.sample, &e2->u.sample);
-        case USF_EVENT_DANGLING:
-            return comp_dangling(&e1->u.dangling, &e2->u.dangling);
-        case USF_EVENT_BURST:
-            return comp_burst(&e1->u.burst, &e2->u.burst);
-        case USF_EVENT_TRACE:
-            return comp_trace(&e1->u.trace, &e2->u.trace);
-        default:
-            E_PRINT("%s\n", "file error");
+    case USF_EVENT_SAMPLE:
+        return comp_sample(&e1->u.sample, &e2->u.sample);
+    case USF_EVENT_DANGLING:
+        return comp_dangling(&e1->u.dangling, &e2->u.dangling);
+    case USF_EVENT_BURST:
+        return comp_burst(&e1->u.burst, &e2->u.burst);
+    case USF_EVENT_TRACE:
+        return comp_trace(&e1->u.trace, &e2->u.trace);
+    default:
+        E_PRINT("%s\n", "file error");
     }
 
     /* Not reached */
@@ -213,29 +213,29 @@ static void
 print_event(usf_event_t *e)
 {
     switch (e->type) {
-        case USF_EVENT_SAMPLE:
-            print_sample(&e->u.sample);
-            break;
-        case USF_EVENT_DANGLING:
-            print_dangling(&e->u.dangling);
-            break;
-        case USF_EVENT_BURST:
-            print_burst(&e->u.burst);
-            break;
-        case USF_EVENT_TRACE:
-            print_trace(&e->u.trace);
-            break;
-        default:
-            E_PRINT("%s\n", "file error");
+    case USF_EVENT_SAMPLE:
+        print_sample(&e->u.sample);
+        break;
+    case USF_EVENT_DANGLING:
+        print_dangling(&e->u.dangling);
+        break;
+    case USF_EVENT_BURST:
+        print_burst(&e->u.burst);
+        break;
+    case USF_EVENT_TRACE:
+        print_trace(&e->u.trace);
+        break;
+    default:
+        E_PRINT("%s\n", "file error");
     }
 }
 
 #define USF_READ(usf_file, event) if (1) {      \
-    error = usf_read(usf_file, event);          \
-    if (error == USF_ERROR_EOF)                 \
-        break;                                  \
-    E_USF(error, "usf_read");                   \
-}
+        error = usf_read(usf_file, event);      \
+        if (error == USF_ERROR_EOF)             \
+            break;                              \
+        E_USF(error, "usf_read");               \
+    }
 
 int
 main(int argc, char **argv)

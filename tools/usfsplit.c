@@ -35,11 +35,11 @@
 #include <assert.h>
 #include <uart/usf.h>
 
-#define E(err, str) do {                                        \
-    if ((err) != USF_ERROR_OK)                                  \
-        print_and_exit("%s:%d: %s\n",                           \
-                __FUNCTION__, __LINE__, usf_strerror(err));     \
-} while (0)
+#define E(err, str) do {                                                \
+        if ((err) != USF_ERROR_OK)                                      \
+            print_and_exit("%s:%d: %s\n",                               \
+                           __FUNCTION__, __LINE__, usf_strerror(err));  \
+    } while (0)
 
 typedef struct {
     char *i_file_name;
@@ -111,29 +111,29 @@ main(int argc, char **argv)
         usf_tid_t tid;
 
         switch (event.type) {
-            case USF_EVENT_SAMPLE:
-                tid = event.u.sample.begin.tid;
-                break;
-            case USF_EVENT_DANGLING:
-                tid = event.u.dangling.begin.tid;
-                break;
-            case USF_EVENT_BURST:
-                continue;
-            case USF_EVENT_TRACE:
-                assert(0);
+        case USF_EVENT_SAMPLE:
+            tid = event.u.sample.begin.tid;
+            break;
+        case USF_EVENT_DANGLING:
+            tid = event.u.dangling.begin.tid;
+            break;
+        case USF_EVENT_BURST:
+            continue;
+        case USF_EVENT_TRACE:
+            assert(0);
         }
 
         switch (tid) {
-            case 0:
-                error = usf_append(usf_o_file0, &event);
-                E(error, "usf_append");
-                break;
-            case 1:
-                error = usf_append(usf_o_file1, &event);
-                E(error, "usf_append");
-                break;
-            default:
-                assert(0);
+        case 0:
+            error = usf_append(usf_o_file0, &event);
+            E(error, "usf_append");
+            break;
+        case 1:
+            error = usf_append(usf_o_file1, &event);
+            E(error, "usf_append");
+            break;
+        default:
+            assert(0);
         }
     }
 

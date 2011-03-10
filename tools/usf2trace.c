@@ -35,11 +35,11 @@
 #include <assert.h>
 #include <uart/usf.h>
 
-#define E(err, str) do {                                        \
-    if ((err) != USF_ERROR_OK)                                  \
-        print_and_exit("%s:%d: %s\n",                           \
-                __FUNCTION__, __LINE__, usf_strerror(err));     \
-} while (0)
+#define E(err, str) do {                                                \
+        if ((err) != USF_ERROR_OK)                                      \
+            print_and_exit("%s:%d: %s\n",                               \
+                           __FUNCTION__, __LINE__, usf_strerror(err));  \
+    } while (0)
 
 typedef struct {
     char *i_file_name;
@@ -106,16 +106,16 @@ main(int argc, char **argv)
         usf_access_t *pc1;
 
         switch (event1.type) {
-            case USF_EVENT_SAMPLE:
-                pc1 = &event1.u.sample.begin;
-                break;
-            case USF_EVENT_DANGLING:
-                pc1 = &event1.u.dangling.begin;
-                break;
-            case USF_EVENT_BURST:
-                continue;
-            case USF_EVENT_TRACE:
-                assert(0);
+        case USF_EVENT_SAMPLE:
+            pc1 = &event1.u.sample.begin;
+            break;
+        case USF_EVENT_DANGLING:
+            pc1 = &event1.u.dangling.begin;
+            break;
+        case USF_EVENT_BURST:
+            continue;
+        case USF_EVENT_TRACE:
+            assert(0);
         }
 
         event2.type = USF_EVENT_TRACE;

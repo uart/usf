@@ -113,18 +113,18 @@ read_bzip2(usf_file_t *file, void *buf, size_t count)
     int read;
     usf_error_t usf_error = USF_ERROR_OK;
 
-     /* Error handling: If BZ2_bzRead(bzerror, b, count) reads the last count
-      * bytes in the file, it returns count and sets bzerror to BZ_STREAM_END,
-      * in this case we want to return USF_ERROR_OK, since there are no errors,
-      * and then return USF_ERROR_EOF on the next call.
-      *
-      * Note: If BZ2_bzRead is called once more after it has returned
-      * BZ_STREAM_END it seems to always return BZ_SEQUENCE_ERROR, which
-      * we could check for. However, according to the manual
-      * BZ_SEQUENCE_ERROR is returned "if b was opened with BZ2_bzWriteOpen".
-      *
-      * --  David E.
-      */
+    /* Error handling: If BZ2_bzRead(bzerror, b, count) reads the last count
+     * bytes in the file, it returns count and sets bzerror to BZ_STREAM_END,
+     * in this case we want to return USF_ERROR_OK, since there are no errors,
+     * and then return USF_ERROR_EOF on the next call.
+     *
+     * Note: If BZ2_bzRead is called once more after it has returned
+     * BZ_STREAM_END it seems to always return BZ_SEQUENCE_ERROR, which
+     * we could check for. However, according to the manual
+     * BZ_SEQUENCE_ERROR is returned "if b was opened with BZ2_bzWriteOpen".
+     *
+     * --  David E.
+     */
 
     if (file->bzeof)
         return USF_ERROR_EOF;

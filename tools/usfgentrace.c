@@ -36,13 +36,13 @@
 
 #define MAX_NR_SDIST 256
 
-#define USF_ERROR(_e) do {              \
-    usf_error_t e = (_e);               \
-    if ((e) != USF_ERROR_OK) {          \
-        fprintf(stderr, "Error: %s\n", usf_strerror(e)); \
-        exit(EXIT_FAILURE);             \
-    }                                   \
-} while (0)
+#define USF_ERROR(_e) do {                                      \
+        usf_error_t e = (_e);                                   \
+        if ((e) != USF_ERROR_OK) {                              \
+            fprintf(stderr, "Error: %s\n", usf_strerror(e));    \
+            exit(EXIT_FAILURE);                                 \
+        }                                                       \
+    } while (0)
         
 
 static char *usage_str = "Usage: usfgentrace [OPTS]... [STEP] [ITER] [SIZE]...\n";
@@ -108,13 +108,13 @@ parse_args(int argc, char **argv)
 
     while ((c = getopt(argc, argv, "ho:")) != -1) {
         switch (c) {
-            case 'h':
-                fprintf(stderr, "%s", usage_str);
-                exit(EXIT_SUCCESS);
-                break;
-            case 'o':
-                args_file_name = optarg;
-                break;
+        case 'h':
+            fprintf(stderr, "%s", usage_str);
+            exit(EXIT_SUCCESS);
+            break;
+        case 'o':
+            args_file_name = optarg;
+            break;
         }
     }
 
