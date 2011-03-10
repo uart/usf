@@ -40,7 +40,7 @@
 #define MIN(x, y) ((x) < (y) ? (x) : (y))
 
 #define E_ERROR(fmt, args...)   \
-    print_and_exit("%s:%s " fmt, __FILE__, __LINE__, args)
+    print_and_exit("%s:%i " fmt, __FILE__, __LINE__, args)
 
 #define E_USF(e, name) do {                                     \
     usf_error_t _e = (e);                                       \
