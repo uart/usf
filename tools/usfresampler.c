@@ -74,14 +74,16 @@ exit_usage(const char *error)
 	    "      -p PERIOD       Sample period.\n"
 	    "      -s SEED         Random seed.\n");
 
-    if (error) {
+    if (error && *error) {
 	fprintf(stderr,
 		"\n"
 		"Error: %s\n",
 		error);
 
 	exit(EXIT_FAILURE);
-    } else
+    } else if (error)
+	exit(EXIT_FAILURE);
+    else
 	exit(EXIT_SUCCESS);
 }
 
@@ -109,6 +111,9 @@ parse_args(args_t *args, int argc, char **argv)
         case 's':
             args->seed = atoi(optarg);
             break;
+        case '?':
+        case ':':
+            exit_usage("");
         default:
             assert(0);
         }
