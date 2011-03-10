@@ -450,3 +450,12 @@ usf_read(usf_file_t *file, usf_event_t *event)
     else
 	return usf_read_event(file, event);
 }
+
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * c-file-style: "k&r"
+ * End:
+ */

@@ -207,3 +207,12 @@ usf_header(const usf_header_t **header, usf_file_t *file)
     *header = file->header;
     return USF_ERROR_OK;
 }
+
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * c-file-style: "k&r"
+ * End:
+ */

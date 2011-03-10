@@ -58,3 +58,12 @@ struct usf_file_s {
 #define ARRAY_LEN(a) (sizeof(a) / sizeof(*a))
 
 #endif
+
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * c-file-style: "k&r"
+ * End:
+ */

@@ -219,3 +219,12 @@ main(int argc, char **argv)
     close_infiles(usf_ifile_list, usf_ifile_list_len);
     return 0;
 }
+
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * c-file-style: "k&r"
+ * End:
+ */

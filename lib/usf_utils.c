@@ -89,3 +89,11 @@ usf_stratype(usf_atype_t atype)
 	return "Unknown";
 }
 
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * c-file-style: "k&r"
+ * End:
+ */

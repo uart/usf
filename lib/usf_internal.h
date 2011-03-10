@@ -93,3 +93,12 @@ usf_internal_write(usf_file_t *file, void *buf, size_t count)
 }
 
 #endif
+
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * c-file-style: "k&r"
+ * End:
+ */

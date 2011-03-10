@@ -151,5 +151,11 @@ write_bzip2(usf_file_t *file, void *buf, size_t count)
     return bzerror != BZ_OK ? USF_ERROR_SYS : USF_ERROR_OK;
 }
 
-
-
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * c-file-style: "k&r"
+ * End:
+ */

@@ -40,3 +40,12 @@ usf_error_t usf_header_free(usf_header_t *header);
 usf_error_t usf_header_dup(usf_header_t **out, const usf_header_t *in);
 
 #endif
+
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * c-file-style: "k&r"
+ * End:
+ */

@@ -212,3 +212,12 @@ usf_error_t usf_read(usf_file_t *file, usf_event_t *event);
 #endif
 
 #endif
+
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * c-file-style: "k&r"
+ * End:
+ */

@@ -145,3 +145,12 @@ main(int argc, char **argv)
     usf_close(usf_o_file1);
     return 0;
 }
+
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * c-file-style: "k&r"
+ * End:
+ */
