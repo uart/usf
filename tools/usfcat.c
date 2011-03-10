@@ -67,7 +67,7 @@ typedef struct {
     usf_compression_t compression;
 } args_t;
 
-static void
+static void __attribute__ ((format (printf, 1, 2)))
 print_and_exit(char *fmt, ...)
 {
     va_list args;

@@ -54,7 +54,7 @@ typedef struct {
     unsigned int seed;
 } args_t;
 
-static void
+static void __attribute__ ((format (printf, 1, 2)))
 print_and_exit(char *fmt, ...)
 {
     va_list args;

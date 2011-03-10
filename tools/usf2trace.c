@@ -48,7 +48,7 @@ typedef struct {
 
 static char *usage_str = "Usage: usf2trc [INFILE] [OUTFILE]";
 
-static void
+static void __attribute__ ((format (printf, 1, 2)))
 print_and_exit(char *fmt, ...)
 {
     va_list args;
