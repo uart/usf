@@ -82,17 +82,21 @@ static void
 parse_args(args_t *args, int argc, char **argv)
 {
     int c;
-    int not_used;
 
     static struct option long_opts[] = {
         {"help", no_argument, NULL, 'h'},
         {"compression", required_argument, NULL, 'c'},
+        { NULL, 0, NULL, 0 }
     };
 
     args->compression = (usf_compression_t)-1;
 
-    while ((c = getopt_long(argc, argv, "h", long_opts, &not_used)) != -1) {
+    while ((c = getopt_long(argc, argv, "hc:", long_opts, NULL)) != -1) {
         switch (c) {
+            case 'h':
+                printf("%s\n", usage_str);
+                exit(EXIT_SUCCESS);
+
             case 'c':
                 if (!strcmp("none", optarg))
                     args->compression = USF_COMPRESSION_NONE;
@@ -101,17 +105,23 @@ parse_args(args_t *args, int argc, char **argv)
                 else
                     print_and_exit("Unknown compression\n\n%s\n", usage_str);
                 break;
+
+            case '?':
+            case ':':
+                print_and_exit("\n%s\n", usage_str);
+
             default:
-                print_and_exit(usage_str);
-                break;
+                abort();
         }
     }
 
     if (optind < argc) {
         args->ifile_list = &argv[optind];
         args->ifile_list_len = argc - optind;
-    } else 
-        print_and_exit(usage_str);
+    } else
+        print_and_exit("No input file specified\n"
+                       "\n"
+                       "%s\n", usage_str);
 }
 
 static usf_file_t **
