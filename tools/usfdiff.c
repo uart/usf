@@ -72,7 +72,7 @@ static void
 parse_args(args_t *args, int argc, char **argv)
 {
     if (argc != 3)
-        print_and_exit(usage_str);
+        print_and_exit("Missing argument\n\n%s\n", usage_str);
 
     args->file_name1 = argv[1];
     args->file_name2 = argv[2];
