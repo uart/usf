@@ -59,13 +59,15 @@ static char *usage_str =
     "Usage: usfcat [OPTION]... [FILE]...\n"
     "Concatenate FILE(s) to standard output.\n\n"
     "  -h, --help\t\tdisplay this help and exit\n"
-    "  -c, --compression\tSet compression algorithm\n";
+    "  -c, --compression\tSet compression algorithm\n"
+    "  -d, --delta\t\tEnable delta compression\n";
 
 typedef struct {
     int    ifile_list_len;
     char **ifile_list;
 
     usf_compression_t compression;
+    int delta;
 } args_t;
 
 static void __attribute__ ((format (printf, 1, 2)))
@@ -87,12 +89,14 @@ parse_args(args_t *args, int argc, char **argv)
     static struct option long_opts[] = {
         {"help", no_argument, NULL, 'h'},
         {"compression", required_argument, NULL, 'c'},
+        {"delta", no_argument, NULL, 'd'},
         { NULL, 0, NULL, 0 }
     };
 
     args->compression = (usf_compression_t)-1;
+    args->delta = 0;
 
-    while ((c = getopt_long(argc, argv, "hc:", long_opts, NULL)) != -1) {
+    while ((c = getopt_long(argc, argv, "hc:d", long_opts, NULL)) != -1) {
         switch (c) {
         case 'h':
             printf("%s\n", usage_str);
@@ -105,6 +109,10 @@ parse_args(args_t *args, int argc, char **argv)
                 args->compression = USF_COMPRESSION_BZIP2;
             else
                 print_and_exit("Unknown compression\n\n%s\n", usage_str);
+            break;
+
+        case 'd':
+            args->delta = 1;
             break;
 
         case '?':
@@ -205,6 +213,9 @@ main(int argc, char **argv)
     make_header(usf_ifile_list, usf_ifile_list_len, &header);
     if (args.compression != (usf_compression_t)-1)
         header.compression = args.compression;
+
+    if (args.delta)
+        header.flags |= USF_FLAG_DELTA;
 
     error = usf_create(&usf_ofile, NULL, &header);
     E_USF(error, "usf_create");
