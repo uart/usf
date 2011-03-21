@@ -149,14 +149,16 @@ make_header(usf_file_t    **usf_ifile_list,
             usf_header_t   *outheader)
 {
     usf_error_t error;
+    const usf_header_t *main_header;
 
+    error = usf_header(&main_header, usf_ifile_list[0]);
+    E_USF(error, "usf_header");
+
+    memset(outheader, 0, sizeof(*outheader));
     outheader->version = USF_VERSION_CURRENT;
     outheader->flags = USF_FLAG_NATIVE_ENDIAN;
+    outheader->compression = main_header->compression;
     outheader->time_begin = (usf_wtime_t)-1;
-    outheader->time_end = 0;
-    outheader->line_sizes = 0;
-    outheader->argc = 0;
-    outheader->argv = NULL;
 
     for (int i = 0; i < usf_ifile_list_len; i++) {
         const usf_header_t *header;
