@@ -9,6 +9,13 @@ AC_PROG_RANLIB
 
 AC_PROG_CC_STDC
 
+AC_CHECK_HEADERS([argp.h], 
+  [ have_argp=true ], [
+    AC_MSG_WARN([GNU Argp not found, some tools will be disabled.])
+    have_argp=false
+  ])
+AM_CONDITIONAL([HAVE_ARGP], [ test x$have_argp = xtrue ])
+
 AC_CHECK_FUNCS([strndup strnlen])
 AC_CHECK_LIB([bz2], [BZ2_bzReadOpen])
 

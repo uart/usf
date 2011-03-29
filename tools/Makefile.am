@@ -1,5 +1,10 @@
-bin_PROGRAMS = usfdump usf2usf usfsort usfcat usfstats usf2trace \
-               usfresampler usfdiff usfsplit usfgentrace
+if HAVE_ARGP
+PROG_NEED_ARGP=usfdump usf2usf
+endif
+
+bin_PROGRAMS = usfsort usfcat usfstats usf2trace \
+               usfresampler usfdiff usfsplit usfgentrace \
+		$(PROG_NEED_ARGP)
 
 CPPFLAGS = -I $(top_srcdir)/include
 LDADD = ../lib/libusf.a
