@@ -194,9 +194,9 @@ write_access(usf_file_t *file, const usf_access_t *a)
 	PACK_UINT16(file, buf, &cur, a, len);
 	PACK_UINT8(file, buf, &cur, a, type);
         
-        E_ERROR(usf_internal_write(file, (void *)buf, cur - buf));
+        E_ERROR(usf_internal_write(file, (const void *)buf, cur - buf));
     } else
-        E_ERROR(usf_internal_write(file, (void *)a, DATA_LEN_ACCESS));
+        E_ERROR(usf_internal_write(file, (const void *)a, DATA_LEN_ACCESS));
 
 ret_err:
     return error;
@@ -242,7 +242,7 @@ write_sample(usf_file_t *file, const usf_event_t *event)
 
     E_ERROR(write_access(file, &s->begin));
     E_ERROR(write_access(file, &s->end));
-    E_ERROR(usf_internal_write(file, (void *)&s->line_size,
+    E_ERROR(usf_internal_write(file, (const void *)&s->line_size,
                                sizeof(usf_line_size_2_t)));
 
 ret_err:
@@ -275,7 +275,7 @@ write_dangling(usf_file_t *file, const usf_event_t *event)
     assert(event->type == USF_EVENT_DANGLING);
 
     E_ERROR(write_access(file, &d->begin));
-    E_ERROR(usf_internal_write(file, (void *)&d->line_size,
+    E_ERROR(usf_internal_write(file, (const void *)&d->line_size,
                                sizeof(usf_line_size_2_t)));
 
 ret_err:
@@ -306,7 +306,7 @@ write_burst(usf_file_t *file, const usf_event_t *event)
     const usf_event_burst_t *b = &event->u.burst;
     assert(event->type == USF_EVENT_BURST);
 
-    E_ERROR(usf_internal_write(file, (void *)&b->begin_time,
+    E_ERROR(usf_internal_write(file, (const void *)&b->begin_time,
                                sizeof(usf_atime_t)));
 
 ret_err:
@@ -375,7 +375,7 @@ usf_append_event(usf_file_t *file, const usf_event_t *event)
 {
     usf_error_t error = USF_ERROR_OK;
 
-    E_ERROR(usf_internal_write(file, (void *)&event->type,
+    E_ERROR(usf_internal_write(file, (const void *)&event->type,
                                sizeof(usf_event_type_t)));
     E_ERROR(event_io[event->type].write(file, event));
 

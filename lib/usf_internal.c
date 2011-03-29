@@ -62,7 +62,7 @@ read_none(usf_file_t *file, void *buf, size_t count)
 }
 
 usf_error_t
-write_none(usf_file_t *file, void *buf, size_t count)
+write_none(usf_file_t *file, const void *buf, size_t count)
 {
     usf_error_t error = USF_ERROR_OK;
 
@@ -143,11 +143,11 @@ read_bzip2(usf_file_t *file, void *buf, size_t count)
 }
 
 usf_error_t
-write_bzip2(usf_file_t *file, void *buf, size_t count)
+write_bzip2(usf_file_t *file, const void *buf, size_t count)
 {
     int bzerror;
 
-    BZ2_bzWrite(&bzerror, file->bzfile, buf, count);
+    BZ2_bzWrite(&bzerror, file->bzfile, (void *)buf, count);
     return bzerror != BZ_OK ? USF_ERROR_SYS : USF_ERROR_OK;
 }
 
