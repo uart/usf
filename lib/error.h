@@ -61,7 +61,7 @@
 #define E_ERROR(expr)                                           \
     do {                                                        \
         error = expr;                                           \
-        if (error != USF_ERROR_OK && error != USF_ERROR_EOF) {  \
+        if (error != USF_ERROR_OK) {                            \
             DBGLOG(error, #expr);                               \
             goto ret_err;                                       \
         }                                                       \

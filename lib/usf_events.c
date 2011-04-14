@@ -415,8 +415,6 @@ usf_read_event(usf_file_t *file, usf_event_t *event)
 
     E_ERROR(usf_internal_read(file, &event->type,
                               sizeof(usf_event_type_t)));
-    if (error == USF_ERROR_EOF)
-        goto ret_err;
 
     E_IF(event->type >= ARRAY_LEN(event_io),
 	 USF_ERROR_FILE);
