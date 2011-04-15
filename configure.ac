@@ -35,6 +35,18 @@ AC_ARG_ENABLE([strict],
     CFLAGS="-Werror ${CFLAGS}"
   ])
 
+AC_MSG_CHECKING([for PIN])
+AC_ARG_VAR([PIN_HOME], [ Path to PIN toolkit ])
+if [ test "$PIN_HOME" != "" ] && \
+   [ test -e ${PIN_HOME}/source/tools/makefile.gnu.config ]; then
+
+  have_pin=true
+  AC_MSG_RESULT([ yes ($PIN_HOME) ])
+else
+  AC_MSG_RESULT([no])
+fi
+AM_CONDITIONAL([HAVE_PIN], [ test x$have_pin = xtrue ])
+
 AC_CONFIG_HEADERS([config.h])
 
 AC_CONFIG_FILES([
@@ -46,6 +58,8 @@ AC_CONFIG_FILES([
 	lib/Makefile
 
 	tools/Makefile
+
+	pin/Makefile
 
 	test/Makefile
 ])

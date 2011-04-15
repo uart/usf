@@ -17,6 +17,9 @@ stamp-h1
 .deps/
 autom4te.cache/
 
+/pin/obj-*
+!/pin/Makefile.in
+
 /test/create0
 /test/create1
 
