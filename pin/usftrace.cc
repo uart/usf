@@ -79,6 +79,25 @@ static VOID fini(INT32 code, VOID *v);
 DEF_LOG(log_rd, USF_ATYPE_RD)
 DEF_LOG(log_wr, USF_ATYPE_WR)
 
+static VOID
+log_access(VOID *pc, VOID *addr, ADDRINT size, THREADID tid, UINT32 access_type)
+{
+    usf_event_t e;
+
+    e.type = USF_EVENT_TRACE;
+    e.u.trace.access.pc = (usf_addr_t)pc;
+    e.u.trace.access.addr = (usf_addr_t)addr;
+    e.u.trace.access.time = usf_time++;
+    e.u.trace.access.tid = (usf_tid_t)tid;
+    e.u.trace.access.len = (usf_alen_t)size;
+    e.u.trace.access.type = (usf_atype_t)access_type;
+
+    if (usf_append(usf_file, &e) != USF_ERROR_OK) {
+        cerr << "USF: Failed to append event."  << endl;
+        abort();
+    }
+}
+
 static ADDRINT
 is_tracing()
 {
@@ -98,25 +117,25 @@ instruction(INS ins, VOID *not_used)
         }
     }
 
-    if (INS_IsMemoryRead(ins)) {
+    UINT32 no_ops = INS_MemoryOperandCount(ins);
+
+    for (UINT32 op = 0; op < no_ops; op++) {
+        const UINT32 size = INS_MemoryOperandSize(ins, op);
+	const bool is_rd = INS_MemoryOperandIsRead(ins, op);
+	const bool is_wr = INS_MemoryOperandIsWritten(ins, op);
+	const UINT32 atype =
+	    is_rd && is_wr ? USF_ATYPE_RW :
+	    (is_wr ? USF_ATYPE_WR : USF_ATYPE_RD);
+
         INS_InsertIfCall(ins, IPOINT_BEFORE, (AFUNPTR)is_tracing, IARG_END);
-        INS_InsertThenCall(ins, IPOINT_BEFORE,
-                           (AFUNPTR)log_rd,
+	INS_InsertThenCall(ins, IPOINT_BEFORE,
+                           (AFUNPTR)log_access,
                            IARG_INST_PTR,
-                           IARG_MEMORYREAD_EA,
-                           IARG_MEMORYREAD_SIZE,
+                           IARG_MEMORYOP_EA, op,
+                           IARG_UINT32, size,
                            IARG_THREAD_ID,
-                           IARG_END);
-    }
-    if (INS_IsMemoryWrite(ins)) {
-        INS_InsertIfCall(ins, IPOINT_BEFORE, (AFUNPTR)is_tracing, IARG_END);
-        INS_InsertThenCall(ins, IPOINT_BEFORE,
-                           (AFUNPTR)log_wr,
-                           IARG_INST_PTR,
-                           IARG_MEMORYWRITE_EA,
-                           IARG_MEMORYWRITE_SIZE,
-                           IARG_THREAD_ID,
-                           IARG_END);
+                           IARG_UINT32, atype,
+                           IARG_END); 
     }
 }
 
