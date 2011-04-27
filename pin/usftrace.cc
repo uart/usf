@@ -56,29 +56,6 @@ static usf_atime_t usf_time;
 
 static VOID fini(INT32 code, VOID *v);
 
-#define DEF_LOG(_name, _type)                                   \
-    static VOID                                                 \
-    _name(VOID *pc, VOID *addr, ADDRINT size, THREADID tid)     \
-    {                                                           \
-        usf_event_t event;                                      \
-        usf_access_t *access;                                   \
-                                                                \
-        event.type = USF_EVENT_TRACE;                           \
-        access = &event.u.trace.access;                         \
-                                                                \
-        access->pc   = (usf_addr_t)pc;                          \
-        access->addr = (usf_addr_t)addr;                        \
-        access->time = usf_time++;                              \
-        access->tid  = (usf_tid_t)tid;                          \
-        access->len  = size;                                    \
-        access->type = _type;                                   \
-                                                                \
-        usf_append(usf_file, &event);                           \
-    }
-
-DEF_LOG(log_rd, USF_ATYPE_RD)
-DEF_LOG(log_wr, USF_ATYPE_WR)
-
 static VOID
 log_access(VOID *pc, VOID *addr, ADDRINT size, THREADID tid, UINT32 access_type)
 {
