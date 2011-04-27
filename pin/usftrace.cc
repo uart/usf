@@ -46,6 +46,8 @@ KNOB<BOOL> knob_detach(KNOB_MODE_WRITEONCE,
                        "pintool", "d", "0", "Stop pin at stop address");
 KNOB<BOOL> knob_bzip2(KNOB_MODE_WRITEONCE,
                       "pintool", "c", "0", "Enable BZip2 compression");
+KNOB<BOOL> knob_inst_time(KNOB_MODE_WRITEONCE,
+                          "pintool", "i", "0", "Use instruction count as time base");
 
 static int tracing;
 static unsigned long begin_addr; 
@@ -64,7 +66,7 @@ log_access(VOID *pc, VOID *addr, ADDRINT size, THREADID tid, UINT32 access_type)
     e.type = USF_EVENT_TRACE;
     e.u.trace.access.pc = (usf_addr_t)pc;
     e.u.trace.access.addr = (usf_addr_t)addr;
-    e.u.trace.access.time = usf_time++;
+    e.u.trace.access.time = usf_time;
     e.u.trace.access.tid = (usf_tid_t)tid;
     e.u.trace.access.len = (usf_alen_t)size;
     e.u.trace.access.type = (usf_atype_t)access_type;
@@ -75,7 +77,13 @@ log_access(VOID *pc, VOID *addr, ADDRINT size, THREADID tid, UINT32 access_type)
     }
 }
 
-static ADDRINT
+static VOID PIN_FAST_ANALYSIS_CALL
+inc_time()
+{
+    usf_time++;
+}
+
+static ADDRINT PIN_FAST_ANALYSIS_CALL
 is_tracing()
 {
     return tracing;
@@ -104,7 +112,9 @@ instruction(INS ins, VOID *not_used)
 	    is_rd && is_wr ? USF_ATYPE_RW :
 	    (is_wr ? USF_ATYPE_WR : USF_ATYPE_RD);
 
-        INS_InsertIfCall(ins, IPOINT_BEFORE, (AFUNPTR)is_tracing, IARG_END);
+        INS_InsertIfCall(ins, IPOINT_BEFORE, AFUNPTR(is_tracing),
+                         IARG_FAST_ANALYSIS_CALL,
+                         IARG_END);
 	INS_InsertThenCall(ins, IPOINT_BEFORE,
                            (AFUNPTR)log_access,
                            IARG_INST_PTR,
@@ -113,6 +123,30 @@ instruction(INS ins, VOID *not_used)
                            IARG_THREAD_ID,
                            IARG_UINT32, atype,
                            IARG_END); 
+
+        if (!knob_inst_time) {
+            /* Increase the time counter if the time base is memory accesses */
+            INS_InsertIfCall(ins, IPOINT_BEFORE, AFUNPTR(is_tracing),
+                             IARG_FAST_ANALYSIS_CALL,
+                             IARG_END);
+            INS_InsertThenCall(ins, IPOINT_BEFORE,
+                               AFUNPTR(inc_time),
+                               IARG_FAST_ANALYSIS_CALL,
+                               IARG_END);
+        }
+    }
+
+    if (knob_inst_time) {
+        /* Increase the time counter if the time base is instructions.
+         * NOTE: This means that multiple memory acceses may
+         * happen at the same time */
+        INS_InsertIfCall(ins, IPOINT_BEFORE, AFUNPTR(is_tracing),
+                         IARG_FAST_ANALYSIS_CALL,
+                         IARG_END);
+        INS_InsertThenCall(ins, IPOINT_BEFORE,
+                           AFUNPTR(inc_time),
+                           IARG_FAST_ANALYSIS_CALL,
+                           IARG_END);
     }
 }
 
@@ -134,7 +168,8 @@ init(int argc, char *argv[])
 
     header.version = USF_VERSION_CURRENT;
     header.compression = knob_bzip2.Value() ? USF_COMPRESSION_BZIP2 : USF_COMPRESSION_NONE;
-    header.flags = USF_FLAG_NATIVE_ENDIAN | USF_FLAG_TRACE | USF_FLAG_DELTA;
+    header.flags = USF_FLAG_NATIVE_ENDIAN | USF_FLAG_TRACE | USF_FLAG_DELTA |
+        (knob_inst_time ? USF_FLAG_TIME_INSTRUCTIONS : USF_FLAG_TIME_ACCESSES);
 
     if (gettimeofday(&tv, NULL) == 0)
 	header.time_begin = tv.tv_sec;
