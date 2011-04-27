@@ -60,7 +60,8 @@ static char *usage_str =
     "Concatenate FILE(s) to standard output.\n\n"
     "  -h, --help\t\tdisplay this help and exit\n"
     "  -c, --compression\tSet compression algorithm\n"
-    "  -d, --delta\t\tEnable delta compression\n";
+    "  -d, --delta\t\tEnable delta compression\n"
+    "  -f, --force\t\tForce concatenation\n";
 
 typedef struct {
     int    ifile_list_len;
@@ -68,6 +69,7 @@ typedef struct {
 
     usf_compression_t compression;
     int delta;
+    int force;
 } args_t;
 
 static void __attribute__ ((format (printf, 1, 2)))
@@ -90,13 +92,15 @@ parse_args(args_t *args, int argc, char **argv)
         {"help", no_argument, NULL, 'h'},
         {"compression", required_argument, NULL, 'c'},
         {"delta", no_argument, NULL, 'd'},
+        {"force", no_argument, NULL, 'f'},
         { NULL, 0, NULL, 0 }
     };
 
     args->compression = (usf_compression_t)-1;
     args->delta = 0;
+    args->force = 0;
 
-    while ((c = getopt_long(argc, argv, "hc:d", long_opts, NULL)) != -1) {
+    while ((c = getopt_long(argc, argv, "hc:df", long_opts, NULL)) != -1) {
         switch (c) {
         case 'h':
             printf("%s\n", usage_str);
@@ -113,6 +117,10 @@ parse_args(args_t *args, int argc, char **argv)
 
         case 'd':
             args->delta = 1;
+            break;
+
+        case 'f':
+            args->force = 1;
             break;
 
         case '?':
@@ -149,6 +157,49 @@ open_infiles(char **ifile_list, int ifile_list_len)
     }
 
     return usf_ifile_list;
+}
+
+static int
+check_input_files(usf_file_t    **usf_ifile_list,
+                  int             usf_ifile_list_len)
+{
+    int ret_error = 0;
+    usf_error_t error;
+    const usf_header_t *base_header;
+
+    error = usf_header(&base_header, usf_ifile_list[0]);
+    E_USF(error, "usf_header");
+
+#define FLAG_CMP(h1, h2, mask) (((h1)->flags & (mask)) == ((h2)->flags & (mask)))
+    for (int i = 1; i < usf_ifile_list_len; i++) {
+        const usf_header_t *header;
+
+        error = usf_header(&header, usf_ifile_list[i]);
+        E_USF(error, "usf_header");
+
+        if (!FLAG_CMP(base_header, header, USF_FLAG_TIME_MASK)) {
+            fprintf(stderr, "Error: File 0 and %i have different time bases\n",
+                    i);
+            ret_error = 1;
+        }
+
+        if (!FLAG_CMP(base_header, header, USF_FLAG_TRACE)) {
+            fprintf(stderr,
+                    "Error: Mixing trace and sample files (0, %i)\n",
+                    i);
+            ret_error = 1;
+        }
+
+        if (!FLAG_CMP(base_header, header, USF_FLAG_INSTRUCTIONS)) {
+            fprintf(stderr,
+                    "Error: Mixing instruction and data samples (0, %i)\n",
+                    i);
+            ret_error = 1;
+        }
+    }
+#undef FLAG_CMP
+
+    return !ret_error;
 }
 
 static void
@@ -209,6 +260,16 @@ main(int argc, char **argv)
 
     usf_ifile_list_len = args.ifile_list_len;
     usf_ifile_list = open_infiles(args.ifile_list, usf_ifile_list_len);
+
+    if (!check_input_files(usf_ifile_list, usf_ifile_list_len)) {
+        if (args.force)
+            fprintf(stderr, "Continuing despite errors...\n");
+        else {
+            fprintf(stderr, "Input file errors, aborting.\n");
+            close_infiles(usf_ifile_list, usf_ifile_list_len);
+            exit(EXIT_FAILURE);
+        }
+    }
 
     make_header(usf_ifile_list, usf_ifile_list_len, &header);
     if (args.compression != (usf_compression_t)-1)
