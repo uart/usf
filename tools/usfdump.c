@@ -150,6 +150,22 @@ print_header(const usf_header_t *h)
         if (h->flags & flag_names[i].flag)
             printf("\t\t%s\n", flag_names[i].name);
     }
+
+    printf("\tTime base: ");
+    switch (h->flags & USF_FLAG_TIME_MASK) {
+    case USF_FLAG_TIME_ACCESSES:
+        printf("accesses\n");
+        break;
+    case USF_FLAG_TIME_INSTRUCTIONS:
+        printf("instructions\n");
+        break;
+    case USF_FLAG_TIME_CYCLES:
+        printf("cycles\n");
+        break;
+    default:
+        printf("unknown (0x%x)\n", h->flags & USF_FLAG_TIME_MASK);
+        break;
+    }
 }
 
 static int

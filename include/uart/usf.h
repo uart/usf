@@ -71,6 +71,19 @@ typedef uint16_t usf_compression_t;
 /** File contains instruction samples */
 #define USF_FLAG_INSTRUCTIONS (1 << 3)
 
+/**
+ * Reserve two bits for the time base, note that these may not be
+ * contiguous in future releases.
+ */
+#define USF_FLAG_TIME_MASK ((1 << 4) | (1 << 5))
+
+/** Time in accesses */
+#define USF_FLAG_TIME_ACCESSES (0 << 4)
+/** Time in instructions */
+#define USF_FLAG_TIME_INSTRUCTIONS (1 << 4)
+/** Time in cycles */
+#define USF_FLAG_TIME_CYCLES (3 << 4)
+
 /* @{ */
 /**
  * Always set the native endian flag when creating a file. If the
