@@ -52,6 +52,18 @@ conf_t conf = {
     .file = NULL
 };
 
+struct {
+    usf_flags_t flag;
+    const char *name;
+} flag_names[] = {
+    { USF_FLAG_TRACE, "trace" },
+    { USF_FLAG_BURST, "burst" },
+    { USF_FLAG_DELTA, "delta compression"},
+    { USF_FLAG_INSTRUCTIONS, "instructions" },
+    { USF_FLAG_NATIVE_ENDIAN, "native endian" },
+    { USF_FLAG_FOREIGN_ENDIAN, "foreign endian" },
+};
+
 static void
 print_access(const usf_access_t *a)
 {
@@ -120,13 +132,11 @@ print_header(const usf_header_t *h)
 	"Header:\n"
 	"\tVersion: %" PRIu16 ".%" PRIu16 "\n"
 	"\tCompression: %" PRIu16 " (%s)\n"
-	"\tFlags: 0x%.8" PRIx32 "\n"
 	"\tSampling time: %" PRIu64 "-%" PRIu64 "\n"
 	"\tLine sizes: ",
 
 	USF_VERSION_MAJOR(h->version), USF_VERSION_MINOR(h->version),
 	h->compression, usf_strcompr(h->compression),
-	h->flags,
 	h->time_begin, h->time_end);
 
     print_line_sizes(h->line_sizes);
@@ -134,6 +144,12 @@ print_header(const usf_header_t *h)
     printf("\n\tCommand line:\n");
     for (int i = 0; i < h->argc; i++)
 	printf("\t\t%s\n", h->argv[i]);
+
+    printf("\tFlags: 0x%.8" PRIx32 "\n", h->flags);
+    for (int i = 0; i < sizeof(flag_names) / sizeof(*flag_names); i++) {
+        if (h->flags & flag_names[i].flag)
+            printf("\t\t%s\n", flag_names[i].name);
+    }
 }
 
 static int

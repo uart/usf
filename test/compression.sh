@@ -14,7 +14,7 @@ function run_test {
     opts=$1; shift
 
     $USF2USF $opts $USFFILE $TMPFILE1
-    $USFDUMP $TMPFILE1 | grep -iE "(trace|burst|sample|dangling)" > $TMPFILE2
+    $USFDUMP $TMPFILE1 | grep -iE "^\[(trace|burst|sample|dangling)\]" > $TMPFILE2
 
     diff $REFFILE $TMPFILE2
     if [ "$?" != "0" ]; then
