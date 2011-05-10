@@ -49,12 +49,12 @@ KNOB<BOOL> knob_bzip2(KNOB_MODE_WRITEONCE,
 KNOB<BOOL> knob_inst_time(KNOB_MODE_WRITEONCE,
                           "pintool", "i", "0", "Use instruction count as time base");
 
-static int tracing;
-static unsigned long begin_addr; 
-static unsigned long end_addr;
+static int tracing = 0;
+static unsigned long begin_addr = 0;
+static unsigned long end_addr = 0;
 
-static usf_file_t *usf_file;
-static usf_atime_t usf_time;
+static usf_file_t *usf_file = NULL;
+static usf_atime_t usf_time = 0;
 
 static VOID fini(INT32 code, VOID *v);
 
