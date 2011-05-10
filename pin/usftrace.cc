@@ -38,12 +38,15 @@
 
 KNOB<string> knob_filename(KNOB_MODE_WRITEONCE,
                            "pintool", "o", "foo.usf", "Output filename");
+KNOB<UINT64> knob_end_cnt(KNOB_MODE_WRITEONCE,
+                             "pintool", "count", "0", "Number of accesses to trace");
+
 KNOB<UINT64> knob_begin_addr(KNOB_MODE_WRITEONCE,
                              "pintool", "b", "0", "Start tracing at this address");
 KNOB<UINT64> knob_end_addr(KNOB_MODE_WRITEONCE,
                            "pintool", "e", "0", "Stop tracing at this address");
 KNOB<BOOL> knob_detach(KNOB_MODE_WRITEONCE,
-                       "pintool", "d", "0", "Stop pin at stop address");
+                       "pintool", "d", "0", "Exit pin on stop condition");
 KNOB<BOOL> knob_bzip2(KNOB_MODE_WRITEONCE,
                       "pintool", "c", "0", "Enable BZip2 compression");
 KNOB<BOOL> knob_inst_time(KNOB_MODE_WRITEONCE,
@@ -52,6 +55,7 @@ KNOB<BOOL> knob_inst_time(KNOB_MODE_WRITEONCE,
 static int tracing = 0;
 static unsigned long begin_addr = 0;
 static unsigned long end_addr = 0;
+static UINT64 end_cnt = (UINT64)-1;
 
 static usf_file_t *usf_file = NULL;
 static usf_atime_t inst_count = 0;
@@ -95,6 +99,8 @@ log_access(VOID *pc, VOID *addr, ADDRINT size, THREADID tid, UINT32 access_type)
     }
 
     access_count++;
+    if (access_count >= end_cnt)
+        stop_trace();
 }
 
 static VOID PIN_FAST_ANALYSIS_CALL
@@ -168,6 +174,8 @@ init(int argc, char *argv[])
     if (!begin_addr)
         tracing = 1;
     end_addr = knob_end_addr;
+    if (knob_end_cnt)
+        end_cnt = knob_end_cnt;
 
     header.version = USF_VERSION_CURRENT;
     header.compression = knob_bzip2.Value() ? USF_COMPRESSION_BZIP2 : USF_COMPRESSION_NONE;
