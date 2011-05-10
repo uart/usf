@@ -54,7 +54,8 @@ static unsigned long begin_addr = 0;
 static unsigned long end_addr = 0;
 
 static usf_file_t *usf_file = NULL;
-static usf_atime_t usf_time = 0;
+static usf_atime_t inst_count = 0;
+static usf_atime_t access_count = 0;
 
 static VOID fini(INT32 code, VOID *v);
 
@@ -83,7 +84,7 @@ log_access(VOID *pc, VOID *addr, ADDRINT size, THREADID tid, UINT32 access_type)
     e.type = USF_EVENT_TRACE;
     e.u.trace.access.pc = (usf_addr_t)pc;
     e.u.trace.access.addr = (usf_addr_t)addr;
-    e.u.trace.access.time = usf_time;
+    e.u.trace.access.time = knob_inst_time ? inst_count : access_count;
     e.u.trace.access.tid = (usf_tid_t)tid;
     e.u.trace.access.len = (usf_alen_t)size;
     e.u.trace.access.type = (usf_atype_t)access_type;
@@ -92,12 +93,14 @@ log_access(VOID *pc, VOID *addr, ADDRINT size, THREADID tid, UINT32 access_type)
         cerr << "USF: Failed to append event."  << endl;
         abort();
     }
+
+    access_count++;
 }
 
 static VOID PIN_FAST_ANALYSIS_CALL
-inc_time()
+inc_inst_count()
 {
-    usf_time++;
+    inst_count++;
 }
 
 static ADDRINT PIN_FAST_ANALYSIS_CALL
@@ -135,31 +138,19 @@ instruction(INS ins, VOID *not_used)
                            IARG_THREAD_ID,
                            IARG_UINT32, atype,
                            IARG_END); 
-
-        if (!knob_inst_time) {
-            /* Increase the time counter if the time base is memory accesses */
-            INS_InsertIfCall(ins, IPOINT_BEFORE, AFUNPTR(is_tracing),
-                             IARG_FAST_ANALYSIS_CALL,
-                             IARG_END);
-            INS_InsertThenCall(ins, IPOINT_BEFORE,
-                               AFUNPTR(inc_time),
-                               IARG_FAST_ANALYSIS_CALL,
-                               IARG_END);
-        }
     }
 
-    if (knob_inst_time) {
-        /* Increase the time counter if the time base is instructions.
-         * NOTE: This means that multiple memory acceses may
-         * happen at the same time */
-        INS_InsertIfCall(ins, IPOINT_BEFORE, AFUNPTR(is_tracing),
-                         IARG_FAST_ANALYSIS_CALL,
-                         IARG_END);
-        INS_InsertThenCall(ins, IPOINT_BEFORE,
-                           AFUNPTR(inc_time),
-                           IARG_FAST_ANALYSIS_CALL,
-                           IARG_END);
-    }
+    /* Increase the instruction counter
+     *
+     * NOTE: This means that multiple memory acceses may happen at the
+     * same time if using the instruction time base */
+    INS_InsertIfCall(ins, IPOINT_BEFORE, AFUNPTR(is_tracing),
+                     IARG_FAST_ANALYSIS_CALL,
+                     IARG_END);
+    INS_InsertThenCall(ins, IPOINT_BEFORE,
+                       AFUNPTR(inc_inst_count),
+                       IARG_FAST_ANALYSIS_CALL,
+                       IARG_END);
 }
 
 static int
@@ -204,6 +195,10 @@ init(int argc, char *argv[])
 static VOID
 fini(INT32 code, VOID *v)
 {
+    cerr << "=== Trace statistics ===" << endl;
+    cerr << "Instructions: " << inst_count << endl;
+    cerr << "Memory accesses: " << access_count << endl;
+
     usf_close(usf_file);
 }
 
