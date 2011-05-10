@@ -58,6 +58,23 @@ static usf_atime_t usf_time = 0;
 
 static VOID fini(INT32 code, VOID *v);
 
+
+static void
+start_trace()
+{
+    tracing = 1;
+}
+
+static void
+stop_trace()
+{
+    tracing = 0;
+    if (knob_detach) {
+        fini(0, NULL);
+        exit(0);
+    }
+}
+
 static VOID
 log_access(VOID *pc, VOID *addr, ADDRINT size, THREADID tid, UINT32 access_type)
 {
@@ -93,14 +110,9 @@ static VOID
 instruction(INS ins, VOID *not_used)
 {
     if (begin_addr && INS_Address(ins) == begin_addr)
-        tracing = 1;
-    if (end_addr && INS_Address(ins) == end_addr) {
-        tracing = 0;
-        if (knob_detach) {
-            fini(0, NULL);
-            exit(0);
-        }
-    }
+        start_trace();
+    if (end_addr && INS_Address(ins) == end_addr)
+        stop_trace();
 
     UINT32 no_ops = INS_MemoryOperandCount(ins);
 
