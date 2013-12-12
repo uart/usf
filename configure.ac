@@ -17,6 +17,10 @@ AC_CHECK_HEADERS([argp.h],
 AM_CONDITIONAL([HAVE_ARGP], [ test x$have_argp = xtrue ])
 
 AC_CHECK_FUNCS([strndup strnlen])
+
+AC_CHECK_HEADERS([bzlib.h], [], [
+  AC_MSG_ERROR([Can't find bzlib.h, please install libbz2-dev or equivalent.])
+])
 AC_CHECK_LIB([bz2], [BZ2_bzReadOpen])
 
 AC_ARG_ENABLE([debug-log],
