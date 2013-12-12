@@ -1,40 +1,22 @@
 PIN_HOME=@PIN_HOME@
-PIN_KIT=$(PIN_HOME)
--include $(PIN_HOME)/source/tools/makefile.gnu.config
+PIN_ROOT=$(PIN_HOME)
+CONFIG_ROOT := $(PIN_ROOT)/source/tools/Config
 
-CXXFLAGS = -I @top_srcdir@/include
-
-LIBS = ../lib/libusf.a -lbz2
-
-TOOL_ROOTS = usftrace
-TOOLS = $(TOOL_ROOTS:%=$(OBJDIR)%$(PINTOOL_SUFFIX))
-
-all: tools
-
-tools: $(OBJDIR) $(TOOLS)
-
-$(OBJDIR):
-	mkdir -p $(OBJDIR)
-
-$(OBJDIR)%.o : %.cc
-	$(CXX) -c $(CXXFLAGS) $(PIN_CXXFLAGS) ${OUTOPT}$@ $<
-
-$(TOOLS): $(PIN_LIBNAMES)
-
-$(TOOLS): %$(PINTOOL_SUFFIX) : %.o
-	${PIN_LD} $(PIN_LDFLAGS) $(LINK_DEBUG) ${LINK_OUT}$@ $< ${PIN_LPATHS} $(PIN_LIBS) $(LIBS) $(DBG)
+include $(CONFIG_ROOT)/makefile.config
+include makefile.rules
 
 install:
 
 uninstall:
 
-clean:
-	$(RM) -r $(OBJDIR)
-
 distclean: clean
 
 maintainer-clean: clean
 
-.PHONY: all tools \
-	clean distclean maintainer-clean \
+.PHONY: clean distclean maintainer-clean \
 	install uninstall
+
+include $(CONFIG_ROOT)/makefile.default.rules
+
+$(OBJDIR)%$(OBJ_SUFFIX): %.cc
+	$(CXX) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<

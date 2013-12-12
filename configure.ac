@@ -42,7 +42,7 @@ AC_ARG_ENABLE([strict],
 AC_MSG_CHECKING([for PIN])
 AC_ARG_VAR([PIN_HOME], [ Path to PIN toolkit ])
 if [ test "$PIN_HOME" != "" ] && \
-   [ test -e ${PIN_HOME}/source/tools/makefile.gnu.config ]; then
+   [ test -e ${PIN_HOME}/source/tools/Config/makefile.config ]; then
 
   have_pin=true
   AC_MSG_RESULT([ yes ($PIN_HOME) ])
@@ -64,6 +64,7 @@ AC_CONFIG_FILES([
 	tools/Makefile
 
 	pin/Makefile
+	pin/makefile.rules
 
 	test/Makefile
 ])

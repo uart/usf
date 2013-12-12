@@ -13,12 +13,14 @@ stamp-h1
 
 *.o
 *.a
+*~
 
 .deps/
 autom4te.cache/
 
 /pin/obj-*
 !/pin/Makefile.in
+/pin/makefile.rules
 
 /test/create0
 /test/create1
